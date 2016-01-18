@@ -7,8 +7,8 @@ var gameScore = 0;
 
 //to move
 
-var x = canvas.width/2;
-var y = canvas.height-30;
+var x = canvas.width / 2;
+var y = canvas.height - 30;
 var dx = 2;
 var dy = -2;
 var paddleHeight = 10;
@@ -16,8 +16,8 @@ var paddleWidth = 75;
 var paddleX = (canvas.width - paddleWidth) / 2;
 var rightPressed = false;
 var leftPressed = false;
-var brickRowCount = 3;
-var brickColumnCount = 5;
+var numRows = 3;
+var numCols = 5;
 var brickWidth = 75;
 var brickHeight = 20;
 var brickPadding = 10;
@@ -27,10 +27,10 @@ document.addEventListener("keydown", keyDownHandler, false);
 document.addEventListener("keyup", keyUpHandler, false);
 
 var bricks = [];
-for (c = 0; c < brickColumnCount; c++) {
-    bricks[c] = [];
-    for (r = 0; r < brickRowCount; r++) {
-         bricks[c][r] = { x: 0, y: 0, status: 1 };
+for (var col = 0; col < numCols; col++) {
+    bricks[col] = [];
+    for (var row = 0; row < numRows; row++) {
+        bricks[col][row] = { x: 0, y: 0, status: 1 };
     }
 }
 
@@ -41,11 +41,9 @@ function keyDownHandler(event) {
     else if (event.keyCode == 37) {
         leftPressed = true;
     }
-        
 }
     
 function keyUpHandler(event) {
-    
     if (event.keyCode == 39) {
         rightPressed = false;
     }
@@ -57,7 +55,7 @@ function keyUpHandler(event) {
 function drawBall() {
     ctx.beginPath();
     ctx.arc(x, y, ballRadius, 0, 2 * Math.PI);
-    ctx.fillstyle = "#0033FF";
+    ctx.fillStyle = "#0033FF";
     ctx.fillStroke = "#0033FF";
     ctx.Stroke = "10"
     ctx.fill();
@@ -73,13 +71,13 @@ function drawPaddle(){
 }
 
 function drawBricks() {
-    for (c = 0; c < brickColumnCount; c++) {
-        for (r = 0; r < brickRowCount; r++) {
-            if (bricks[c][r].status == 1) {
-                var brickX = (c* (brickWidth + brickPadding)) + brickOffsetLeft;
-                var brickY = (r * (brickHeight + brickPadding)) + brickOffsetTop;
-                bricks[c][r].x = brickX;
-                bricks[c][r].y = brickY;
+    for (var col = 0; col < numCols; col++) {
+        for (row = 0; row < numRows; row++) {
+            if (bricks[col][row].status == 1) {
+                var brickX = (col * (brickWidth + brickPadding)) + brickOffsetLeft;
+                var brickY = (row * (brickHeight + brickPadding)) + brickOffsetTop;
+                bricks[col][row].x = brickX;
+                bricks[col][row].y = brickY;
                 ctx.beginPath();
                 ctx.rect(brickX, brickY, brickWidth, brickHeight);
                 ctx.fillStyle = "#0095DD";
@@ -91,13 +89,13 @@ function drawBricks() {
 }
 
 function collisionDetection() {
-    for (c = 0; c < brickColumnCount; c++) {
-        for (r = 0; r <brickRowCount; r++) {
-            var b = bricks[c][r];
-            if (b.status == 1) {
-                if (x > b.x && x < b.x + brickWidth && y > b.y && y < b.y + brickHeight) {
+    for (var col = 0; col < numCols; col++) {
+        for (var row = 0; row < numRows; row++) {
+            var brick = bricks[col][row];
+            if (brick.status == 1) {
+                if (x > brick.x && x < (brick.x + brickWidth) && y > brick.y && y < (brick.y + brickHeight)) {
                     dy = -dy;
-                    b.status = 0;
+                    brick.status = 0;
                     gameScore += 100;
                     gameIndicator.innerHTML = "<strong>Score: </strong>" + gameScore;
                 }
@@ -106,7 +104,7 @@ function collisionDetection() {
     }
 }
 
-
+// Our main function that will be repeated every 10 ms
 function draw() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     drawBricks();
@@ -114,6 +112,7 @@ function draw() {
     drawPaddle();
     collisionDetection();
  
+    // Change directions
     if (x + dx > canvas.width - ballRadius || x + dx < ballRadius) {
         dx = -dx;
     }
@@ -142,4 +141,4 @@ function draw() {
     y = y + dy;
 }
 
-//setInterval(draw, 10);
+setInterval(draw, 10);
